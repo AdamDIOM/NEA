@@ -16,11 +16,6 @@ namespace NEA
     {
         private void PlayRPG(TableLayoutPanel tblLayout)
         {
-            // add intermediary window to allow user to select a specific game or upload their own...
-            // use OpenFileDialogue to allow user to select the file
-            // temporary rooms data reset
-
-            Rooms = PopulateRooms(Rooms);
             
             // sets the current position to be the starting room
             currentRoom = 0;
@@ -28,8 +23,8 @@ namespace NEA
             /* this method changes the title to "Play RPG" */
             ModifyTitle(tblLayout, "Play RPG");
 
-            /* this method moves the original 3 buttons (Designer, Play, Quit) away and hides them */
-            HideStandardButtons(tblLayout);
+            /* this method clears the screen so the directional buttons can appear */
+            ClearScreen(tblLayout);
 
             /* this function returns a list of tuples containing room name and tblLayout x coord and y coord */
             List<Tuple<string, int, int>> DirectionalButtons = CreateButtonTuples();
@@ -40,50 +35,13 @@ namespace NEA
             /* this method loops through the list of tuples containing the button names and tblLayout coordinates and shows and en/disables each one */
             ShowButtons(tblLayout, LabelsList, DirectionalButtons);
         }
-
-        private void ChooseFile()
+        // implement polymorphism here and split into smaller methods ---------------------------------------------------------------------------------------------------------------------------------
+        // implement ability to modify win condition and add events to the different rooms? (link to line 294)-------------------------------------------------------------------------------------
+        private void PopulateRooms(TableLayoutPanel tblLayout, string filePath)
         {
-            string[] gameFilePaths = ReturnGameFilePaths();
 
-            Button button = CreateGameInfoButton(gameFilePaths[0]);
-
-        }
-        private Button CreateGameInfoButton(string FilePath) 
-        {
-            StreamReader FileReader = new StreamReader(FilePath);
-            string data = FileReader.ReadLine();
-            string[] dataSplit = data.Split(';');
-            foreach(string s in dataSplit)
-            {
-                Debug.WriteLine(s);
-            }
-
-            return new Button();
-        }
-        private string[] ReturnGameFilePaths()
-        {
-            // gets the file paths for every game file stored locally
-            string[] gameFilePaths = Directory.GetFiles(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Games\\", "*.txt");
-
-            // debug features
-            Debug.WriteLine(" ");
-            Debug.WriteLine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Games");
-            foreach (string s in gameFilePaths)
-            {
-                Debug.WriteLine(s + "game");
-            }
-
-            return gameFilePaths;
-        }
-
-        private List<Room> PopulateRooms(List<Room> Rooms)
-        {
-            ChooseFile();
-
-            // creates temp filename
-            string filename = "Games/Game1.txt";
-            // opens file called filename
-            StreamReader FileReader = new StreamReader(filename);
+            // opens file at location filePath
+            StreamReader FileReader = new StreamReader(filePath);
             // takes header data
             string data = FileReader.ReadLine();
             // wipes Rooms list
@@ -98,9 +56,9 @@ namespace NEA
                 // debug feature
                 foreach (string newl in lineSplit)
                 {
-                    //Debug.WriteLine(newl);
+                    Debug.WriteLine(newl);
                 }
-                // use polymorphism here with basic room vs advanced rooms-----------------------------------------------------------------------------------------------------------------------------------
+                // use polymorphism here with basic room vs advanced rooms ----------------------------------------------------------------------------------------------------------------------------
                 // selects which constructor to use dependent on the string array length
                 switch (lineSplit.Length)
                 {
@@ -138,10 +96,90 @@ namespace NEA
                         Debug.WriteLine(lineSplit[0] + "has problems");
                         break;
                 }
-                //Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse)));
             }
-            return Rooms;
+
+            // begins game
+            PlayRPG(tblLayout);
         }
+
+        private void ChoosePlayFile(TableLayoutPanel tblLayout)
+        {
+            /* this method moves the original 3 buttons (Designer, Play, Quit) away and hides them */
+            HideStandardButtons(tblLayout);
+
+            // returns file paths of all default game saves and stores them in a string array
+            string[] gameFilePaths = ReturnGameFilePaths();
+            // loops through all of the default games
+            for(int a = 0; a < gameFilePaths.Length; a++)
+            {
+                // adds a button to select each of the individual game saves
+                AddButton(tblLayout, CreateGameInfoButton(tblLayout, gameFilePaths[a]), 2, a + 1);
+            }
+
+            // use OpenFileDialogue to allow user to select the file
+            AddButton(tblLayout, CreateButton(tblLayout, "Upload", UploadGameFile), 3, 3);
+
+            // adds an exit button to return to main menu
+            AddButton(tblLayout, CreateButton(tblLayout, "Return to Menu", EndGame), 2, 5);
+
+        }
+        private string[] ReturnGameFilePaths()
+        {
+            // gets the file paths for every game file stored locally
+            string[] gameFilePaths = Directory.GetFiles(AppPath + "\\Games\\", "*.txt");
+
+            // debug features
+            Debug.WriteLine(" ");
+            Debug.WriteLine(AppPath + "\\Games");
+            foreach (string s in gameFilePaths)
+            {
+                Debug.WriteLine(s + "game");
+            }
+
+            return gameFilePaths;
+        }
+
+        private Button CreateGameInfoButton(TableLayoutPanel tblLayout, string FilePath) 
+        {
+            // enables reading from files
+            StreamReader FileReader = new StreamReader(FilePath);
+            // returns the first line of the text file, containing the headers
+            string data = FileReader.ReadLine();
+            // splits the header into its separate components - Name, Author and Description
+            string[] dataSplit = data.Split(';');
+            // debug feature
+            foreach(string s in dataSplit)
+            {
+                Debug.WriteLine(s);
+            }
+            // creates a button with the text being the name of the game
+            Button tempbutton = CreateButton(tblLayout, dataSplit[0]);
+            // on click it runs method PopulateRoom, sending parameters of TableLayoutPanel and the chosen file path/name
+            tempbutton.Click += new EventHandler((sender, e) =>
+            {
+                PopulateRooms(tblLayout, FilePath);
+            });
+
+            return tempbutton;
+        }
+
+        private void UploadGameFile(TableLayoutPanel tblLayout)
+        {
+            // creates a new OpenFileDialogue (dialogue window to select a file)
+            OpenFileDialog OpenFile = new OpenFileDialog();
+            // sets the type of file desired (text files)
+            OpenFile.Filter = "txt files (*.txt) | *.txt";
+            // sets the directory the window opens on to the one where the app is running from
+            OpenFile.InitialDirectory = AppPath;
+            // opens the dialogue window
+            OpenFile.ShowDialog();
+            // debug feature
+            Debug.WriteLine(OpenFile.FileName);
+            // runs method sending TableLayoutParameter and the chosen file's path and name
+            PopulateRooms(tblLayout, OpenFile.FileName);
+        }
+
+
 
         private List<Tuple<string, int, int>> CreateButtonTuples()
         {
@@ -211,20 +249,23 @@ namespace NEA
                 AddButton(tblLayout, tempButton, tuple.Item2, tuple.Item3);
             }
         }
-
         private string UpdateDirectionalText(Tuple<string, int, int> tuple)
         {
             
             // creates a temporary string 'Go < direction >'
             string go = "Go " + tuple.Item1;
+            // this checks if there is a room in the specified direction
             if(Rooms[currentRoom].GetRoomsDictionary()[tuple.Item1] > -1)
             {
+                // this checks if the room has been discovered (visited) before
                 if (Rooms[Rooms[currentRoom].GetRoomsDictionary()[tuple.Item1]].IsFound())
                 {
+                    // sets the text to Go < direction > (< room name >)
                     go += "\n (" + Rooms[Rooms[currentRoom].GetRoomsDictionary()[tuple.Item1]].GetName() + ")";
                 }
                 else
                 {
+                    // sets the text to Go < direction > (Unknown)
                     go += "\n (Unknown)";
                 }
             }
@@ -250,9 +291,13 @@ namespace NEA
             AddButton(tblLayout, itemButton, 3, 2);
         }
 
+        // convert win detection to a separate method to differentiate between different win types (link to line 39)---------------------------------------------------------------------------------
         private void UpdateButtonsAndLabels(TableLayoutPanel tblLayout, List<Tuple<string, int, int>> DirectionalButtons, List<Label> LabelsList)
         {
+            // changes status of the visited room to Found to allow for win detection and change of directional buttons
             Rooms[currentRoom].Found();
+            // win detection for default win
+            // move this to a different method
             bool Complete = Room.CheckFound(Rooms);
             if (Complete)
             {
