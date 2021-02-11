@@ -47,6 +47,8 @@ namespace NEA
             Button tempButton = new Button();
             // sets the text on the button to the string from parameters
             tempButton.Text = text;
+            // sets the button font
+            tempButton.Font = new Font(tempButton.Font.FontFamily, 12.0F);
             // makes the button stretch as the window changes
             tempButton.Anchor = (AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom);
             // EventHandler, when button is clicked the parameter method is run through the use of Delegates
@@ -65,6 +67,8 @@ namespace NEA
             Button tempButton = new Button();
             // sets the text on the button to the string from parameters
             tempButton.Text = text;
+            // sets the button font
+            tempButton.Font = new Font(tempButton.Font.FontFamily, 12.0F);
             // makes the button stretch as the window changes
             tempButton.Anchor = (AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom);
             return tempButton;
@@ -79,12 +83,20 @@ namespace NEA
         // moves a Control from one TableLayoutPanel cell to another
         private void MoveControl(TableLayoutPanel tblLayout, int fromX, int fromY, int toX, int toY, bool show = true)
         {
-            // shows the control so it can be manipulated (only visible controls can be moved)
-            tblLayout.GetControlFromPosition(fromX, fromY).Show();
-            // moves control from (fromX, fromY) to (toX, toY) in the TableLayoutPanel
-            tblLayout.Controls.Add(tblLayout.GetControlFromPosition(fromX, fromY), toX, toY);
-            // sets the control's visibility to that specified in the parameter
-            tblLayout.GetControlFromPosition(toX, toY).Visible = show;
+            // try catch used as defensive programming for if a control is moved and not known about
+            try
+            {
+                // shows the control so it can be manipulated (only visible controls can be moved)
+                tblLayout.GetControlFromPosition(fromX, fromY).Show();
+                // moves control from (fromX, fromY) to (toX, toY) in the TableLayoutPanel
+                tblLayout.Controls.Add(tblLayout.GetControlFromPosition(fromX, fromY), toX, toY);
+                // sets the control's visibility to that specified in the parameter
+                tblLayout.GetControlFromPosition(toX, toY).Visible = show;
+            }
+            catch
+            {
+                Debug.WriteLine("control not found");
+            }
         }
 
         // changes the title Label to be the specified text
@@ -111,15 +123,21 @@ namespace NEA
             MoveControl(tblLayout, 4, 5, 2, 4);
         }
 
-        private void ClearScreen(TableLayoutPanel tblLayout)
+        // clears the screen ready for adding new Controls
+        private void ClearScreen(TableLayoutPanel tblLayout, int xMin = 0, int yMin= 1, int xMax = 5, int yMax = 5)
         {
-            for (int x = 0; x < 5; x++)
+            // loops through specified (or pre-determined) columns
+            for (int x = xMin; x < xMax; x++)
             {
-                for (int y = 1; y < 5; y++)
+                // loops through specified (or pre-determined) rows
+                for (int y = yMin; y < yMax; y++)
                 {
+                    // removes Control
                     tblLayout.Controls.Remove(tblLayout.GetControlFromPosition(x, y));
                 }
             }
+            // removes a Return to Menu Button
+            tblLayout.Controls.Remove(tblLayout.GetControlFromPosition(2, 5));
         }
     }
 }
