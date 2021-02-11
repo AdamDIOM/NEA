@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
 
 namespace NEA
 {
@@ -17,6 +18,7 @@ namespace NEA
         public static int currentRoom;
         public static List<Room> Rooms = new List<Room>();
         public static List<string> Inventory = new List<string>();
+        public  string AppPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
         public delegate void DisplayOption(TableLayoutPanel tblLayout);
         public DisplayOption ShowMenu;
@@ -48,7 +50,6 @@ namespace NEA
                 ShowMenu(tblLayout);
             }
         }
-
         private void InitialiseTable(TableLayoutPanel tblLayout)
         {
             /* sets up the table width (window width), height (window heigh - 39), sets it to anchor to all sides so it will resize, adds 6 rows and 5 columns */
@@ -81,11 +82,11 @@ namespace NEA
             // adds the TableLayoutPanel to the Form
             Controls.Add(tblLayout);
         }
-
         private void TitleScreen(TableLayoutPanel tblLayout)
         {
             // creates a Label to show the window title
             Label lblTitle = CreateLabel(tblLayout, "RPG Designer and Player", "lblTitle", 0, 0, 5);
+            // adds the buttons for the title
             TitleButtons(tblLayout);
         }
         private void TitleButtons(TableLayoutPanel tblLayout)
@@ -94,19 +95,15 @@ namespace NEA
             AddButton(tblLayout, CreateButton(tblLayout, "Design", DesignRPG), 1, 2);
 
             /* creates a button for the Play option and adds it to the table */
-            AddButton(tblLayout, CreateButton(tblLayout, "Play", PlayRPG), 3, 2);
+            AddButton(tblLayout, CreateButton(tblLayout, "Play", ChoosePlayFile), 3, 2);
 
             /* creates a button to quit, adds it to the table, adds EventHandler to quit */
             AddButton(tblLayout, CreateButton(tblLayout, "Quit", Quit), 2, 4);
         }
-
-        
         private void Quit(TableLayoutPanel tblLayout)
         {
             // quits the application.
             Application.Exit();
         }
-
-        
     }
 }
