@@ -99,7 +99,7 @@ namespace NEA
             /* moves the controls from original locations to new locations and then hides each button */
             MoveControl(tblLayout, 1, 2, 0, 5, false);
             MoveControl(tblLayout, 3, 2, 1, 5, false);
-            MoveControl(tblLayout, 2, 4, 2, 5, false);
+            MoveControl(tblLayout, 2, 4, 4, 5, false);
         }
 
         // shows the three main menu buttons (Design, Play, Quit)
@@ -108,7 +108,7 @@ namespace NEA
             /* moves the controls from new locations to original locations and then shows each button */
             MoveControl(tblLayout, 0, 5, 1, 2);
             MoveControl(tblLayout, 1, 5, 3, 2);
-            MoveControl(tblLayout, 2, 5, 2, 4);
+            MoveControl(tblLayout, 4, 5, 2, 4);
         }
 
         private void ClearScreen(TableLayoutPanel tblLayout)

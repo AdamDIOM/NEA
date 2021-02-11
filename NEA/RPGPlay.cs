@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
 
 namespace NEA
 {
@@ -18,26 +19,9 @@ namespace NEA
             // add intermediary window to allow user to select a specific game or upload their own...
             // use OpenFileDialogue to allow user to select the file
             // temporary rooms data reset
-            #region temporary Rooms data for testing
-            Rooms = new List<Room>();
-            Rooms.Add(new Room("Porch", -1, 1, 6, -1, -1, -1));
-            Rooms.Add(new Room("Hall", -1, 3, 2, 0, -1, -1, "Up", 7, "Stair"));
-            Rooms.Add(new Room("Kitchen", 1, 5, 4, 6, -1, -1, "Down", 14, "Key"));
-            Rooms.Add(new Room("Dining Room", -1, -1, 5, 1, -1, -1));
-            Rooms.Add(new Room("Bathroom", 2, 5, -1, -1, -1, -1, "Stair"));
-            Rooms.Add(new Room("Living Room", 3, -1, -1, 4, -1, -1));
-            Rooms.Add(new Room("Garage", 0, 2, -1, -1, -1, -1));
-            Rooms.Add(new Room("Upstairs Hall", 8, 10, 11, 13, -1, 1));
-            Rooms.Add(new Room("Study", -1, 9, 7, -1, -1, -1));
-            Rooms.Add(new Room("Master Bedroom", -1, -1, 10, 8, -1, -1));
-            Rooms.Add(new Room("Upstairs Bathroom", 9, -1, 12, 7, -1, -1));
-            Rooms.Add(new Room("Spare Bedroom", 7, 12, -1, -1, -1, -1));
-            Rooms.Add(new Room("Roof", 10, -1, -1, 11, -1, -1, "Key"));
-            Rooms.Add(new Room("Bedroom", -1, 7, -1, -1, -1, -1));
-            Rooms.Add(new Room("Basement", -1, 15, -1, 16, 2, -1));
-            Rooms.Add(new Room("Washing Room", -1, -1, -1, 14, -1, -1));
-            Rooms.Add(new Room("Cinema", -1, 14, -1, -1, -1, -1));
-            #endregion
+
+            Rooms = PopulateRooms(Rooms);
+            
             // sets the current position to be the starting room
             currentRoom = 0;
 
@@ -55,6 +39,108 @@ namespace NEA
 
             /* this method loops through the list of tuples containing the button names and tblLayout coordinates and shows and en/disables each one */
             ShowButtons(tblLayout, LabelsList, DirectionalButtons);
+        }
+
+        private void ChooseFile()
+        {
+            string[] gameFilePaths = ReturnGameFilePaths();
+
+            Button button = CreateGameInfoButton(gameFilePaths[0]);
+
+        }
+        private Button CreateGameInfoButton(string FilePath) 
+        {
+            StreamReader FileReader = new StreamReader(FilePath);
+            string data = FileReader.ReadLine();
+            string[] dataSplit = data.Split(';');
+            foreach(string s in dataSplit)
+            {
+                Debug.WriteLine(s);
+            }
+
+            return new Button();
+        }
+        private string[] ReturnGameFilePaths()
+        {
+            // gets the file paths for every game file stored locally
+            string[] gameFilePaths = Directory.GetFiles(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Games\\", "*.txt");
+
+            // debug features
+            Debug.WriteLine(" ");
+            Debug.WriteLine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Games");
+            foreach (string s in gameFilePaths)
+            {
+                Debug.WriteLine(s + "game");
+            }
+
+            return gameFilePaths;
+        }
+
+        private List<Room> PopulateRooms(List<Room> Rooms)
+        {
+            ChooseFile();
+
+            // creates temp filename
+            string filename = "Games/Game1.txt";
+            // opens file called filename
+            StreamReader FileReader = new StreamReader(filename);
+            // takes header data
+            string data = FileReader.ReadLine();
+            // wipes Rooms list
+            Rooms = new List<Room>();
+            // loops through entire text tile
+            while (!FileReader.EndOfStream)
+            {
+                // reads each line
+                string line = FileReader.ReadLine();
+                // splits the line into understandable chunks
+                string[] lineSplit = line.Split(';');
+                // debug feature
+                foreach (string newl in lineSplit)
+                {
+                    //Debug.WriteLine(newl);
+                }
+                // use polymorphism here with basic room vs advanced rooms-----------------------------------------------------------------------------------------------------------------------------------
+                // selects which constructor to use dependent on the string array length
+                switch (lineSplit.Length)
+                {
+                    // basic Room - name and 6 directions
+                    case 2:
+                        // adds basic Room to Rooms list
+                        Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse)));
+                        break;
+                    // advanced Room - name, 6 directions and additional data
+                    case 3:
+                        string[] addDataSplit = lineSplit[2].Split(',');
+                        // selects which constructor to use dependent on additional data length
+                        switch (addDataSplit.Length)
+                        {
+                            // basic Room with an item
+                            case 1:
+                                Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse), addDataSplit[0]));
+                                break;
+                            // basic Room with an unlockable direction
+                            case 3:
+                                Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse), addDataSplit[0], Convert.ToInt32(addDataSplit[1]), addDataSplit[2]));
+                                break;
+                            // basic Room with an unlockable direction and an item
+                            case 4:
+                                Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse), addDataSplit[0], Convert.ToInt32(addDataSplit[1]), addDataSplit[2], addDataSplit[3]));
+                                break;
+                            // unrecognisable additional data format
+                            default:
+                                Debug.WriteLine(lineSplit[0] + "has problems");
+                                break;
+                        }
+                        break;
+                    // unrecognisable room format
+                    default:
+                        Debug.WriteLine(lineSplit[0] + "has problems");
+                        break;
+                }
+                //Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse)));
+            }
+            return Rooms;
         }
 
         private List<Tuple<string, int, int>> CreateButtonTuples()

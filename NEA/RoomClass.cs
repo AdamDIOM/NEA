@@ -12,20 +12,36 @@ public class Room
     // use of Information Hiding again
     private int ToUnlock;
     private bool found;
-    public Room(string name, int north, int east, int south, int west, int up, int down, string item = "none")
+
+    public Room(string name, int[] directions, string item = "none")
     {
         Name = name;
-        RoomDict.Add("North", north);
-        RoomDict.Add("East", east);
-        RoomDict.Add("South", south);
-        RoomDict.Add("West", west);
-        RoomDict.Add("Up", up);
-        RoomDict.Add("Down", down);
+        RoomDict.Add("North", directions[0]);
+        RoomDict.Add("East", directions[1]);
+        RoomDict.Add("South", directions[2]);
+        RoomDict.Add("West", directions[3]);
+        RoomDict.Add("Up", directions[4]);
+        RoomDict.Add("Down", directions[5]);
         Item = item;
         found = false;
     }
+    public Room(string name, int[] directions, string roomToUnlock, int lockedRoomNumber, string reqItem, string item = "none")
+    {
+        Name = name;
+        RoomDict.Add("North", directions[0]);
+        RoomDict.Add("East", directions[1]);
+        RoomDict.Add("South", directions[2]);
+        RoomDict.Add("West", directions[3]);
+        RoomDict.Add("Up", directions[4]);
+        RoomDict.Add("Down", directions[5]);
+        Item = item;
+        Locked = roomToUnlock;
+        ToUnlock = lockedRoomNumber;
+        NeededItem = reqItem;
+        found = false;
+    }
     // use of Overloading with two constructors
-    public Room(string name, int north, int east, int south, int west, int up, int down, string unlocked, int number, string reqItem, string item = "none")
+    public Room(string name, int north, int east, int south, int west, int up, int down, string roomToUnlock, int lockedRoomNumber, string reqItem, string item = "none")
     {
         Name = name;
         RoomDict.Add("North", north);
@@ -35,9 +51,9 @@ public class Room
         RoomDict.Add("Up", up);
         RoomDict.Add("Down", down);
         Item = item;
+        Locked = roomToUnlock;
+        ToUnlock = lockedRoomNumber;
         NeededItem = reqItem;
-        Locked = unlocked;
-        ToUnlock = number;
         found = false;
     }
 

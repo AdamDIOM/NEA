@@ -28,3 +28,13 @@ C:\Users\Adam\Desktop\NEA\NEA\obj\Debug\NEA.RPG.resources
 C:\Users\Adam\Desktop\NEA\NEA\obj\Debug\NEA.Properties.Resources.resources
 C:\Users\Adam\Desktop\NEA\NEA\obj\Debug\NEA.csproj.GenerateResource.cache
 C:\Users\Adam\Desktop\NEA\NEA\obj\Debug\NEA.csproj.CoreCompileInputs.cache
+C:\Users\07adamdrummond\Desktop\NEA\NEA\obj\Debug\NEA.csprojAssemblyReference.cache
+C:\Users\07adamdrummond\Desktop\NEA\NEA\obj\Debug\NEA.RPG.resources
+C:\Users\07adamdrummond\Desktop\NEA\NEA\obj\Debug\NEA.Properties.Resources.resources
+C:\Users\07adamdrummond\Desktop\NEA\NEA\obj\Debug\NEA.csproj.GenerateResource.cache
+C:\Users\07adamdrummond\Desktop\NEA\NEA\obj\Debug\NEA.csproj.CoreCompileInputs.cache
+C:\Users\07adamdrummond\Desktop\NEA\NEA\obj\Debug\NEA.exe
+C:\Users\07adamdrummond\Desktop\NEA\NEA\obj\Debug\NEA.pdb
+C:\Users\07adamdrummond\Desktop\NEA\NEA\bin\Debug\NEA.exe.config
+C:\Users\07adamdrummond\Desktop\NEA\NEA\bin\Debug\NEA.exe
+C:\Users\07adamdrummond\Desktop\NEA\NEA\bin\Debug\NEA.pdb
