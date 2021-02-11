@@ -175,8 +175,12 @@ namespace NEA
             OpenFile.ShowDialog();
             // debug feature
             Debug.WriteLine(OpenFile.FileName);
-            // runs method sending TableLayoutParameter and the chosen file's path and name
-            PopulateRooms(tblLayout, OpenFile.FileName);
+            // this ensures that PopulateRooms does not run without a valid FileName
+            if (OpenFile.FileName != "")
+            {
+                // runs method sending TableLayoutParameter and the chosen file's path and name
+                PopulateRooms(tblLayout, OpenFile.FileName);
+            }
         }
 
 
