@@ -60,6 +60,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="RoomClass.cs" />
+    <Compile Include="RPGPlaySetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RPGPlayWin.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UsefulFunctions.cs">
       <SubType>Form</SubType>
     </Compile>
