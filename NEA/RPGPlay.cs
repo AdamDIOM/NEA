@@ -12,170 +12,59 @@ using System.IO;
 
 namespace NEA
 {
+    
+    // use of delegate at namespace level to use across class and struct
+    public delegate bool WinOption(TableLayoutPanel tblLayout);
     public partial class RPG : Form
     {
-        private void PlayRPG(TableLayoutPanel tblLayout)
+        
+        private void PlayRPG(TableLayoutPanel tblLayout, string gameData)
         {
-            // add intermediary window to allow user to select a specific game or upload their own...
-            // use OpenFileDialogue to allow user to select the file
-            // temporary rooms data reset
-
-            Rooms = PopulateRooms(Rooms);
-            
             // sets the current position to be the starting room
             currentRoom = 0;
 
             /* this method changes the title to "Play RPG" */
             ModifyTitle(tblLayout, "Play RPG");
 
-            /* this method moves the original 3 buttons (Designer, Play, Quit) away and hides them */
-            HideStandardButtons(tblLayout);
+            /* this method clears the screen so the directional buttons can appear */
+            ClearScreen(tblLayout);
 
             /* this function returns a list of tuples containing room name and tblLayout x coord and y coord */
             List<Tuple<string, int, int>> DirectionalButtons = CreateButtonTuples();
 
             /* this function returns a list of four labels: 'Current Room: ', current room, 'Inventory: ', inventory items; and shows them on screen */
-            List<Label> LabelsList = ShowPlayLabels(tblLayout);
+            List<Label> LabelsList = ShowPlayLabels(tblLayout, gameData);
 
             /* this method loops through the list of tuples containing the button names and tblLayout coordinates and shows and en/disables each one */
             ShowButtons(tblLayout, LabelsList, DirectionalButtons);
         }
+        //-----------------------------------------------add events to the different rooms?--------------------------------------------------------------------------------------------------------
 
-        private void ChooseFile()
-        {
-            string[] gameFilePaths = ReturnGameFilePaths();
-
-            Button button = CreateGameInfoButton(gameFilePaths[0]);
-
-        }
-        private Button CreateGameInfoButton(string FilePath) 
-        {
-            StreamReader FileReader = new StreamReader(FilePath);
-            string data = FileReader.ReadLine();
-            string[] dataSplit = data.Split(';');
-            foreach(string s in dataSplit)
-            {
-                Debug.WriteLine(s);
-            }
-
-            return new Button();
-        }
-        private string[] ReturnGameFilePaths()
-        {
-            // gets the file paths for every game file stored locally
-            string[] gameFilePaths = Directory.GetFiles(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Games\\", "*.txt");
-
-            // debug features
-            Debug.WriteLine(" ");
-            Debug.WriteLine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Games");
-            foreach (string s in gameFilePaths)
-            {
-                Debug.WriteLine(s + "game");
-            }
-
-            return gameFilePaths;
-        }
-
-        private List<Room> PopulateRooms(List<Room> Rooms)
-        {
-            ChooseFile();
-
-            // creates temp filename
-            string filename = "Games/Game1.txt";
-            // opens file called filename
-            StreamReader FileReader = new StreamReader(filename);
-            // takes header data
-            string data = FileReader.ReadLine();
-            // wipes Rooms list
-            Rooms = new List<Room>();
-            // loops through entire text tile
-            while (!FileReader.EndOfStream)
-            {
-                // reads each line
-                string line = FileReader.ReadLine();
-                // splits the line into understandable chunks
-                string[] lineSplit = line.Split(';');
-                // debug feature
-                foreach (string newl in lineSplit)
-                {
-                    //Debug.WriteLine(newl);
-                }
-                // use polymorphism here with basic room vs advanced rooms-----------------------------------------------------------------------------------------------------------------------------------
-                // selects which constructor to use dependent on the string array length
-                switch (lineSplit.Length)
-                {
-                    // basic Room - name and 6 directions
-                    case 2:
-                        // adds basic Room to Rooms list
-                        Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse)));
-                        break;
-                    // advanced Room - name, 6 directions and additional data
-                    case 3:
-                        string[] addDataSplit = lineSplit[2].Split(',');
-                        // selects which constructor to use dependent on additional data length
-                        switch (addDataSplit.Length)
-                        {
-                            // basic Room with an item
-                            case 1:
-                                Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse), addDataSplit[0]));
-                                break;
-                            // basic Room with an unlockable direction
-                            case 3:
-                                Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse), addDataSplit[0], Convert.ToInt32(addDataSplit[1]), addDataSplit[2]));
-                                break;
-                            // basic Room with an unlockable direction and an item
-                            case 4:
-                                Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse), addDataSplit[0], Convert.ToInt32(addDataSplit[1]), addDataSplit[2], addDataSplit[3]));
-                                break;
-                            // unrecognisable additional data format
-                            default:
-                                Debug.WriteLine(lineSplit[0] + "has problems");
-                                break;
-                        }
-                        break;
-                    // unrecognisable room format
-                    default:
-                        Debug.WriteLine(lineSplit[0] + "has problems");
-                        break;
-                }
-                //Rooms.Add(new Room(lineSplit[0], Array.ConvertAll(lineSplit[1].Split(','), int.Parse)));
-            }
-            return Rooms;
-        }
-
-        private List<Tuple<string, int, int>> CreateButtonTuples()
-        {
-            // creates a list to contain the information about each of the six buttons
-            List<Tuple<string, int, int>> DirectionalButtons = new List<Tuple<string, int, int>>();
-
-            /* creates six tuples containing button info and adds to the list */
-            DirectionalButtons.Add(new Tuple<string, int, int>("North", 2, 2));
-            DirectionalButtons.Add(new Tuple<string, int, int>("East", 3, 3));
-            DirectionalButtons.Add(new Tuple<string, int, int>("South", 2, 4));
-            DirectionalButtons.Add(new Tuple<string, int, int>("West", 1, 3));
-            DirectionalButtons.Add(new Tuple<string, int, int>("Up", 1, 2));
-            DirectionalButtons.Add(new Tuple<string, int, int>("Down", 1, 4));
-
-            // sends the list of buttons to where this function was called from
-            return DirectionalButtons;
-        }
-
-        private List<Label> ShowPlayLabels(TableLayoutPanel tblLayout)
+        private List<Label> ShowPlayLabels(TableLayoutPanel tblLayout, string gameData)
         {
             // creates a list to contain all four labels
             List<Label> LabelsList = new List<Label>();
 
             /* creation of the title label 'Current Room:' */
-            LabelsList.Add(CreateLabel(tblLayout, "Current Room:", "lblCurrentRoom", 1, 1, 2));
+            LabelsList.Add(CreateLabel(tblLayout, "Current Room:", "lblCurrentRoom", 1, 1, colSpan:2));
 
             /* creation of the title label 'Inventory:' */
-            LabelsList.Add(CreateLabel(tblLayout, "Inventory", "lblInventory", 4, 1));
+            LabelsList.Add(CreateLabel(tblLayout, "Inventory:", "lblInventory", 4, 1));
 
             /* creation of the label to show the current room */
             LabelsList.Add(CreateLabel(tblLayout, Rooms[currentRoom].GetName(), "lblRoom", 3, 1));
 
             /* creation of the label to show items in the inventory */
             LabelsList.Add(CreateLabel(tblLayout, "", "lblInvItems", 4, 2));
+
+            /* creation of the title label 'Aim:' */
+            LabelsList.Add(CreateLabel(tblLayout, "Aim:", "lblAim", 0, 1));
+
+            // splits the file data into its separate chunks (name, author, description and win condition)
+            string[] splitData = gameData.Split(';');
+            /* selects the aim of the game from three options */
+            string Aim = ReturnWinOptions(splitData[3][0]).Text;
+            LabelsList.Add(CreateLabel(tblLayout, Aim, "lblGameAim", 0, 2, rowSpan:2));
 
             // returns the list of four labels to where the function was called from
             return LabelsList;
@@ -199,7 +88,7 @@ namespace NEA
                 // creates a temporary button with text 'Go <direction>'
                 string go = UpdateDirectionalText(tuple);
                 
-                Button tempButton = CreateButton(tblLayout, go);
+                Button tempButton = CreateButton(go);
                 // adds EventHandler to the button to change room
                 tempButton.Click += new EventHandler((sender, e) => {
                     // sets currentRoom to the direction (tuple.Item1)'s key pair (room integer) in the dictionary stored in the current room
@@ -211,20 +100,23 @@ namespace NEA
                 AddButton(tblLayout, tempButton, tuple.Item2, tuple.Item3);
             }
         }
-
         private string UpdateDirectionalText(Tuple<string, int, int> tuple)
         {
             
             // creates a temporary string 'Go < direction >'
             string go = "Go " + tuple.Item1;
+            // this checks if there is a room in the specified direction
             if(Rooms[currentRoom].GetRoomsDictionary()[tuple.Item1] > -1)
             {
+                // this checks if the room has been discovered (visited) before
                 if (Rooms[Rooms[currentRoom].GetRoomsDictionary()[tuple.Item1]].IsFound())
                 {
+                    // sets the text to Go < direction > (< room name >)
                     go += "\n (" + Rooms[Rooms[currentRoom].GetRoomsDictionary()[tuple.Item1]].GetName() + ")";
                 }
                 else
                 {
+                    // sets the text to Go < direction > (Unknown)
                     go += "\n (Unknown)";
                 }
             }
@@ -234,7 +126,7 @@ namespace NEA
         private void ShowItemsButton(TableLayoutPanel tblLayout, List<Label> LabelsList, List<Tuple<string, int, int>> DirectionalButtons)
         {
             // creates a temporary button with blank text
-            Button itemButton = CreateButton(tblLayout, "");
+            Button itemButton = CreateButton("");
 
             // adds EventHandler to the button to get item and update button
             itemButton.Click += new EventHandler((sender, e) =>
@@ -252,14 +144,12 @@ namespace NEA
 
         private void UpdateButtonsAndLabels(TableLayoutPanel tblLayout, List<Tuple<string, int, int>> DirectionalButtons, List<Label> LabelsList)
         {
-            Rooms[currentRoom].Found();
-            bool Complete = Room.CheckFound(Rooms);
-            if (Complete)
-            {
-                Debug.WriteLine("completed!");
-                GameWon(tblLayout);
-                return;
-            }
+            // changes status of the visited room to Found to allow for win detection and change of directional buttons
+            Rooms[currentRoom].RoomFound();
+            // checks the win condition based upon method specified in game source file.
+            // returns true if won so that following code is not executed
+            if (CheckWin(tblLayout)) return;
+            
             // updates the titles to show what the current room is and inventory contents
             UpdateLabels(LabelsList);
             // en/disables the items button dependant on if there are items in the room
@@ -272,30 +162,33 @@ namespace NEA
             // sets the text of current room label to be the name of the current room
             LabelsList[2].Text = Rooms[currentRoom].GetName();
             // checks if any rooms can be unlocked by sending the inventory to the object and attempting to change based on contents
-            Rooms[currentRoom].UnlockRoom(ref Inventory);
+            // use of Reflection
+            if (Rooms[currentRoom].GetType().ToString() == "AdvancedRoom") Rooms[currentRoom].UnlockRoom(ref Inventory);
+            // legacy code
+            //Rooms[currentRoom].UnlockRoom(ref Inventory);
             
             // clears the inventory items label
             LabelsList[3].Text = "";
             /* adds the name of each item in inventory to the inventory items label and adds a newline between each one */
-            foreach (string s in Inventory)
+            foreach (Item i in Inventory)
             {
-                LabelsList[3].Text += s + "\n";
+                LabelsList[3].Text += i.Name + "\n";
             }
         }
         private void UpdateItemsButton(TableLayoutPanel tblLayout)
         {
-            /* checks if the item in the current room has been got by checking if the 'item' ends in t! (from Got!)
+            /* checks if the item in the current room has been found
                then sets the text to <item name> Got! and disables the button*/
-            if (Rooms[currentRoom].GetItem().Substring(Rooms[currentRoom].GetItem().Length - 2, 2) == "t!")
+            if (Rooms[currentRoom].GetItem().Found == true)
             {
-                tblLayout.GetControlFromPosition(3, 2).Text = Rooms[currentRoom].GetItem();
+                tblLayout.GetControlFromPosition(3, 2).Text = Rooms[currentRoom].GetItem().Name + " Got!";
                 tblLayout.GetControlFromPosition(3, 2).Enabled = false;
             }
             /* checks if there is an item in the current room (by checking it isn't none)
               then sets text to Get <item name>, enables the button and sets a specific cursor*/
-            else if (Rooms[currentRoom].GetItem() != "none")
+            else if (Rooms[currentRoom].GetItem().Name != "none")
             {
-                tblLayout.GetControlFromPosition(3, 2).Text = "Get " + Rooms[currentRoom].GetItem();
+                tblLayout.GetControlFromPosition(3, 2).Text = "Get " + Rooms[currentRoom].GetItem().Name;
                 tblLayout.GetControlFromPosition(3, 2).Enabled = true;
                 tblLayout.GetControlFromPosition(3, 2).Cursor = Cursors.Hand;
             }
@@ -327,18 +220,7 @@ namespace NEA
             }
         }
 
-        private void GameWon(TableLayoutPanel tblLayout)
-        {
-            // removes Controls across the four rows that change
-            ClearScreen(tblLayout);
-
-            // shows the user that they have won the map
-            CreateLabel(tblLayout, "Game won! Congratulations!", "lblWon", 1, 2, 3);
-
-            // creates a button to allow user to end game and return to the main menu
-            AddButton(tblLayout, CreateButton(tblLayout, "Return to Menu", EndGame), 2, 3);
-
-        }
+        
 
         private void EndGame(TableLayoutPanel tblLayout)
         {
