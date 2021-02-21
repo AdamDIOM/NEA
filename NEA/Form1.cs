@@ -17,7 +17,7 @@ namespace NEA
         #region Static variables and delegate setup
         public static int currentRoom;
         public static List<Room> Rooms = new List<Room>();
-        public static List<string> Inventory = new List<string>();
+        public static List<Item> Inventory = new List<Item>();
         public  string AppPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
         public delegate void DisplayOption(TableLayoutPanel tblLayout);
@@ -34,13 +34,11 @@ namespace NEA
             // creates the main TableLayoutPanel for the program to run from
             TableLayoutPanel tblLayout = new TableLayoutPanel();
             // creates an instance of the custom delegate 
+            // use of Delegates
             ShowMenu = new DisplayOption(InitialiseTable);
-            // to be replaced with persistent data
-            
              
             // this enables the program to loop through delegates until the program is fully enabled
             DisplayOption oldShowMenu = ShowMenu;
-            // use of Delegates
             // runs delegate first time to allow while loop to run
             ShowMenu(tblLayout);
             /* loops until oldShowMenu and ShowMenu are the same */
@@ -85,9 +83,9 @@ namespace NEA
         private void TitleScreen(TableLayoutPanel tblLayout)
         {
             // creates a Label to show the window title
-            Label lblTitle = CreateLabel(tblLayout, "RPG Designer and Player", "lblTitle", 0, 0, 5);
+            CreateLabel(tblLayout, "RPG Designer and Player", "lblTitle", 0, 0, colSpan:5, fontSize:30.0F);
             // adds the buttons for the title
-            TitleButtons(tblLayout);
+            ShowMenu = new DisplayOption(TitleButtons);
         }
         private void TitleButtons(TableLayoutPanel tblLayout)
         {
