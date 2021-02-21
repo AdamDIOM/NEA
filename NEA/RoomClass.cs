@@ -1,100 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-public class Room
+
+public struct Item
 {
-    private string Name;
-    public string Item;
-    // use of Composition here
-    private Dictionary<string, int> RoomDict = new Dictionary<string, int>();
+    public string Name;
+    public bool Found;
+}
+public class AdvancedRoom : Room
+{
     // use of Information Hiding as the needed item and the room it unlocks is not revealed
     private string Locked, NeededItem;
     // use of Information Hiding again
     private int ToUnlock;
-    private bool found;
-
-    public Room(string name, int[] directions, string item = "none")
+    public AdvancedRoom(string name, int[] directions, string roomToUnlock, int lockedRoomNumber, string reqItem, string item = "none") : base(name, directions, item)
     {
-        Name = name;
-        RoomDict.Add("North", directions[0]);
-        RoomDict.Add("East", directions[1]);
-        RoomDict.Add("South", directions[2]);
-        RoomDict.Add("West", directions[3]);
-        RoomDict.Add("Up", directions[4]);
-        RoomDict.Add("Down", directions[5]);
-        Item = item;
-        found = false;
-    }
-    public Room(string name, int[] directions, string roomToUnlock, int lockedRoomNumber, string reqItem, string item = "none")
-    {
-        Name = name;
-        RoomDict.Add("North", directions[0]);
-        RoomDict.Add("East", directions[1]);
-        RoomDict.Add("South", directions[2]);
-        RoomDict.Add("West", directions[3]);
-        RoomDict.Add("Up", directions[4]);
-        RoomDict.Add("Down", directions[5]);
-        Item = item;
+        // constructor for the more advanced options - rooms that can be unlocked
         Locked = roomToUnlock;
         ToUnlock = lockedRoomNumber;
         NeededItem = reqItem;
-        found = false;
-    }
-    // use of Overloading with two constructors
-    public Room(string name, int north, int east, int south, int west, int up, int down, string roomToUnlock, int lockedRoomNumber, string reqItem, string item = "none")
-    {
-        Name = name;
-        RoomDict.Add("North", north);
-        RoomDict.Add("East", east);
-        RoomDict.Add("South", south);
-        RoomDict.Add("West", west);
-        RoomDict.Add("Up", up);
-        RoomDict.Add("Down", down);
-        Item = item;
-        Locked = roomToUnlock;
-        ToUnlock = lockedRoomNumber;
-        NeededItem = reqItem;
-        found = false;
     }
 
-    public void SetDictionary(Dictionary<string, int> dict)
+    public override void UnlockRoom(ref List<Item> Inventory)
     {
-        RoomDict = dict;
-    }
-
-    public Dictionary<string, int> GetRoomsDictionary()
-    {
-        return RoomDict;
-    }
-
-    public void SetItem(string item)
-    {
-        Item = item;
-    }
-    public void DelItem()
-    {
-        Item += " Got!";
-    }
-    public string GetItem()
-    {
-        return Item;
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public void UnlockRoom(ref List<string> Inventory)
-    {
+        Debug.WriteLine("child");
+        // use of Defensive Programming
         try
         {
-            foreach(string s in Inventory)
+            // loops through every item in the inventory
+            foreach (Item i in Inventory)
             {
-                if(s == NeededItem)
+                /* if the current item from the inventory is the Needed Item to unlock the room, then the room dictionary is adjusted so that the new room number is applied */
+                if (i.Name == NeededItem)
                 {
-                    Inventory.Remove(s);
+                    Inventory.Remove(i);
                     RoomDict[Locked] = ToUnlock;
+                    // debug features
                     Debug.WriteLine(Locked);
                     Debug.WriteLine(ToUnlock);
                     break;
@@ -105,22 +46,88 @@ public class Room
         {
             Debug.WriteLine("no item required");
         }
-    } 
-    public void Found()
+    }
+}
+
+public class Room
+{
+    private string Name;
+    // use of Composition here
+    protected Dictionary<string, int> RoomDict = new Dictionary<string, int>();
+    public Item Item;
+    private bool Found;
+
+    // constructor takes string for name, array of 6 directions and adds to dictionary and an optional item parameter
+    public Room(string name, int[] directions, string item = "none")
     {
-        found = true;
+        Name = name;
+        RoomDict.Add("North", directions[0]);
+        RoomDict.Add("East", directions[1]);
+        RoomDict.Add("South", directions[2]);
+        RoomDict.Add("West", directions[3]);
+        RoomDict.Add("Up", directions[4]);
+        RoomDict.Add("Down", directions[5]);
+        Item.Name = item;
+        Item.Found = false;
+        // always sets the room's default found to false as no rooms are discovered initially
+        // use of this to express clarity between Item.Found and Room.Found
+        this.Found = false;
+    }
+    // use of Polymorphism
+    public virtual void UnlockRoom(ref List<Item> Inventory)
+    {
+        // debug feature
+        Debug.WriteLine("no rooms to unlock");
+    }
+
+    // should never be needed but is available for future refactoring
+    public void SetDictionary(Dictionary<string, int> dict)
+    {
+        RoomDict = dict;
+    }
+
+    // used for checking room directions and items
+    public Dictionary<string, int> GetRoomsDictionary()
+    {
+        return RoomDict;
+    }
+
+    public void SetItem(Item item)
+    {
+        Item = item;
+    }
+    // changes the name of the item so that it is recognised as unavailable by the Get Item button
+    public void DelItem()
+    {
+        Item.Found = true;
+    }
+    public Item GetItem()
+    {
+        return Item;
+    }
+
+    public string GetName()
+    {
+        return Name;
+    }
+
+    
+    public void RoomFound()
+    {
+        Found = true;
     }
     public bool IsFound()
     {
-        return found;
+        return Found;
     }
+    // use of static method
     public static bool CheckFound(List<Room> Rooms)
     {
         bool allFound = true;
         foreach(Room room in Rooms)
         {
             //Debug.WriteLine(room.Name + ' ' + room.found);
-            if (!room.found)
+            if (!room.Found)
             {
                 allFound = false;
                 break;
