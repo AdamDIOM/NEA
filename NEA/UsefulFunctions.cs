@@ -146,5 +146,37 @@ namespace NEA
             // removes a Return to Menu Button
             tblLayout.Controls.Remove(tblLayout.GetControlFromPosition(2, 5));
         }
+
+        // creates a TextBox and adds it to the TableLayoutPanel
+        private TextBox CreateTextBox(TableLayoutPanel tblLayout, string text, string name, int x, int y, int colSpan = 1, int rowSpan = 1, float fontSize = 18.0F, HorizontalAlignment alignment = HorizontalAlignment.Left, bool multiLine = false)
+        {
+            // creates a temporary Label
+            TextBox tempBox = new TextBox();
+            // sets text formatting to centre alignment
+            tempBox.TextAlign = alignment;
+            // allows the label to get larger and smaller as the window does so
+            tempBox.AutoSize = true;
+            // makes the label stretch as the window changes
+            tempBox.Anchor = (AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom);
+            // sets the label font
+            tempBox.Font = new Font(FontFamily.GenericSansSerif, fontSize, FontStyle.Bold);
+            // sets location for the button - the centre of the container (TableLayoutPanel cell)
+            tempBox.Location = new Point(this.Width / 2 - 2 * tempBox.Width, 50);
+            // sets the text on the label to contain the string from the first parameter
+            tempBox.Text = text;
+            // sets the name of the label to the string from the second parameter
+            tempBox.Name = name;
+            // sets whether the texbox can take multiple lines
+            tempBox.Multiline = multiLine;
+            
+            // sets the span of the Label to the number of columns in the optional parameter
+            tblLayout.SetColumnSpan(tempBox, colSpan);
+            // sets the span of the Label to the number of rows in the optional parameter
+            tblLayout.SetRowSpan(tempBox, rowSpan);
+            // adds the Label to the TableLayoutPanel
+            tblLayout.Controls.Add(tempBox, x, y);
+            // returns the Label
+            return tempBox;
+        }
     }
 }

@@ -38,8 +38,8 @@ namespace NEA
         private void SetWinOptions()
         {
             WinOptions.Add(new WinCombo(1, "Explore all rooms to win", WinFindAllRooms));
-            WinOptions.Add(new WinCombo(2, "Find item '{data[4]}' to win", WinFindItem));
-            WinOptions.Add(new WinCombo(3, "Find room '{data[4]}' to win", WinFindOneRoom));
+            WinOptions.Add(new WinCombo(2, "Find item '{replace}' to win", WinFindItem));
+            WinOptions.Add(new WinCombo(3, "Find room '{replace}' to win", WinFindOneRoom));
             Debug.WriteLine("win op len = " + WinOptions.Count());
         }
 
@@ -141,6 +141,14 @@ namespace NEA
 
             // adds the win condition to the label dependant on which of the three win conditions it is
             description += ReturnWinOptions(data[3][0]).Text;
+            // replaces {replace} with the specific data - uses try/catch to ignore strings that don't have {replace} or a 4th element to data[]
+            try
+            {
+                description = description.Replace("{replace}", data[4]);
+            }
+            catch { }
+            
+            Debug.WriteLine(description);
             return description;
         }
 
