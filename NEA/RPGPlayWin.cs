@@ -12,6 +12,7 @@ using System.IO;
 
 namespace NEA
 {
+    // use of Struct
     public struct WinCombo
     {
         public int Number;
@@ -46,6 +47,7 @@ namespace NEA
             try
             {
                 WinArguments = headerSplit[4];
+                Debug.WriteLine("winargs = " + WinArguments);
             }
             catch { }
         }

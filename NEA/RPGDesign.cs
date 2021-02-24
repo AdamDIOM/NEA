@@ -13,6 +13,18 @@ namespace NEA
 {
     public partial class RPG : Form
     {
+
+        private void DesignData(TableLayoutPanel tblLayout)
+        {
+            ClearScreen(tblLayout);
+            CreateLabel(tblLayout, "Game Name", "lblGameName", 0, 1, alignment: ContentAlignment.MiddleRight, colSpan: 2);
+            CreateTextBox(tblLayout, "<>", "txtGameName", 2, 1, colSpan: 2);
+            CreateLabel(tblLayout, "Your name", "lblName", 0, 2, alignment: ContentAlignment.MiddleRight, colSpan: 2);
+            CreateTextBox(tblLayout, "<>", "txtName", 2, 2, colSpan: 2);
+            CreateLabel(tblLayout, "Game Description", "lblDescription", 0, 3, alignment: ContentAlignment.MiddleRight, colSpan: 2);
+            CreateTextBox(tblLayout, "<>", "txtName", 2, 3, colSpan: 2, rowSpan: 2, multiLine: true);
+        }
+
         private void DesignRPG(TableLayoutPanel tblLayout)
         {
 

@@ -64,6 +64,15 @@ namespace NEA
             string[] splitData = gameData.Split(';');
             /* selects the aim of the game from three options */
             string Aim = ReturnWinOptions(splitData[3][0]).Text;
+
+            // replaces {replace} with the specific data - uses try/catch to ignore strings that don't have {replace} or a 4th element to data[]
+            try
+            {
+                Aim = Aim.Replace("{replace}", splitData[4]);
+            }
+            catch { }
+
+
             LabelsList.Add(CreateLabel(tblLayout, Aim, "lblGameAim", 0, 2, rowSpan:2));
 
             // returns the list of four labels to where the function was called from
