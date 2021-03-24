@@ -115,9 +115,9 @@ namespace NEA
         private void HideStandardButtons(TableLayoutPanel tblLayout)
         {
             /* moves the controls from original locations to new locations and then hides each button */
-            MoveControl(tblLayout, 1, 2, 0, 5, false);
-            MoveControl(tblLayout, 3, 2, 1, 5, false);
-            MoveControl(tblLayout, 2, 4, 4, 5, false);
+            MoveControl(tblLayout, 1, 2, 0, 5);//, false);
+            MoveControl(tblLayout, 3, 2, 1, 5);//, false);
+            MoveControl(tblLayout, 2, 4, 3, 5);//, false);
         }
 
         // shows the three main menu buttons (Design, Play, Quit)
@@ -126,11 +126,11 @@ namespace NEA
             /* moves the controls from new locations to original locations and then shows each button */
             MoveControl(tblLayout, 0, 5, 1, 2);
             MoveControl(tblLayout, 1, 5, 3, 2);
-            MoveControl(tblLayout, 4, 5, 2, 4);
+            MoveControl(tblLayout, 3, 5, 2, 4);
         }
 
         // clears the screen ready for adding new Controls
-        private void ClearScreen(TableLayoutPanel tblLayout, int xMin = 0, int yMin= 1, int xMax = 5, int yMax = 5)
+        private void ClearScreen(TableLayoutPanel tblLayout, int xMin = 0, int yMin = 1, int xMax = 5, int yMax = 5, bool removeReturn = true)
         {
             // loops through specified (or pre-determined) columns
             // use of nested loops
@@ -144,11 +144,11 @@ namespace NEA
                 }
             }
             // removes a Return to Menu Button
-            tblLayout.Controls.Remove(tblLayout.GetControlFromPosition(2, 5));
+            if(removeReturn) tblLayout.Controls.Remove(tblLayout.GetControlFromPosition(2, 5));
         }
 
         // creates a TextBox and adds it to the TableLayoutPanel
-        private TextBox CreateTextBox(TableLayoutPanel tblLayout, string text, string name, int x, int y, int colSpan = 1, int rowSpan = 1, float fontSize = 18.0F, HorizontalAlignment alignment = HorizontalAlignment.Left, bool multiLine = false)
+        private TextBox CreateTextBox(TableLayoutPanel tblLayout, string text, string name, int x, int y, int colSpan = 1, int rowSpan = 1, float fontSize = 18.0F, HorizontalAlignment alignment = HorizontalAlignment.Left, bool multiLine = false, bool editable = true)
         {
             // creates a temporary Label
             TextBox tempBox = new TextBox();
@@ -168,6 +168,8 @@ namespace NEA
             tempBox.Name = name;
             // sets whether the texbox can take multiple lines
             tempBox.Multiline = multiLine;
+            // sets whether the TextBox's content can be edited or not
+            tempBox.Enabled = editable;
             
             // sets the span of the Label to the number of columns in the optional parameter
             tblLayout.SetColumnSpan(tempBox, colSpan);
@@ -177,6 +179,49 @@ namespace NEA
             tblLayout.Controls.Add(tempBox, x, y);
             // returns the Label
             return tempBox;
+        }
+
+        // returns the opposite direction to what is input
+        private Tuple<string, int> InverseDirection(string directionIn)
+        {
+            switch (directionIn)
+            {
+                case "North":
+                    return new Tuple<string, int>("South", 2);
+                case "South":
+                    return new Tuple<string, int>("North", 0);
+                case "East":
+                    return new Tuple<string, int>("West", 3);
+                case "West":
+                    return new Tuple<string, int>("East", 1);
+                case "Up":
+                    return new Tuple<string, int>("Down", 5);
+                case "Down":
+                    return new Tuple<string, int>("Up", 4);
+                default:
+                    return new Tuple<string, int>("North", 0);
+            }
+        }
+        // overloading to handle integer option for direction instead
+        private Tuple<string, int> InverseDirection(int directionIn)
+        {
+            switch (directionIn)
+            {
+                case 0:
+                    return new Tuple<string, int>("South", 2);
+                case 2:
+                    return new Tuple<string, int>("North", 0);
+                case 1:
+                    return new Tuple<string, int>("West", 3);
+                case 3:
+                    return new Tuple<string, int>("East", 1);
+                case 4:
+                    return new Tuple<string, int>("Down", 5);
+                case 5:
+                    return new Tuple<string, int>("Up", 4);
+                default:
+                    return new Tuple<string, int>("North", 0);
+            }
         }
     }
 }

@@ -1,0 +1,3 @@
+test 17;adam;testing to check first attempt at adding locator of second room;
+
+error - need to check if the direction from the first room is null or "*Empty*"

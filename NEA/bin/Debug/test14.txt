@@ -1,0 +1,5 @@
+test14;adam;testing a four room game with a knife in one room (kitchen);1
+porch;1,2,-1,-1,-1,-1
+hall;-1,3,0,-1,-1,-1
+kitchen;3,-1,-1,0,-1,-1
+dining room;-1,-1,2,1,-1,-1

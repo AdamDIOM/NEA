@@ -1,0 +1,1 @@
+test 18;adam;testing to see if it finds rooms to the 2nd degree (updated code to check for *Empty);

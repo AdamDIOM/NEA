@@ -1,0 +1,8 @@
+test 16;adam;testing basic logic to see if it can find the room desired;1
+porch;3,1,-1,-1,-1,-1
+kitchen;2,-1,-1,0,-1,-1
+Dining Room;-1,-1,1,3,-1,-1
+hall;-1,2,0,-1,-1,-1
+
+outcome: finds the first room successfully
+next: find second room and third room to find the connected room

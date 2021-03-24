@@ -1,0 +1,4 @@
+portal game with working item;adam;this should be a game with 'portals' enabled;3;dining room
+porch;1,-1,2,-1,-1,-1
+hall;2,dining,0,-1,-1,-1
+kitchen;0,-1,1,-1,-1,-1

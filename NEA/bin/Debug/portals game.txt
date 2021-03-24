@@ -1,0 +1,4 @@
+portals game;adam;a room which doesn't make logical sense...;2;knife
+hall;1,-1,2,-1,-1,-1
+dining room;2,-1,0,-1,-1,-1
+kitchen;0,-1,1,-1,-1,-1

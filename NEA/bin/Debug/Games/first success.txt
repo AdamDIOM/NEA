@@ -1,0 +1,5 @@
+first success;adam;this should be a four room game with a knife in the kitchen;1
+porch;1,3,-1,-1,-1,-1
+hall;-1,2,0,-1,-1,-1
+dining room;-1,-1,3,1,-1,-1
+kitchen;2,-1,-1,0,-1,-1;knife

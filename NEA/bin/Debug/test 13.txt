@@ -1,0 +1,4 @@
+test 13;adam;testing a four way room with an item in the kitchen (knife);
+
+error: didn't check to see if the new room was already in temprooms so dining room got added twice
+fix: delete the temproom when updating it with the secondary direction

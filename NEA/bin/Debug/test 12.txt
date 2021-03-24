@@ -1,0 +1,4 @@
+test 12;adam;testing to see if room autofill works;1
+hall;1,-1,2,-1,-1,-1
+porch;-1,-1,0,-1,-1,-1
+kitchen;0,-1,-1,-1,-1,-1

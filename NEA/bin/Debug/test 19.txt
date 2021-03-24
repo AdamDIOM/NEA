@@ -1,0 +1,7 @@
+test 19;adam;testing to see whether 1st degree works using a function;1
+porch;3,1,-1,-1,-1,-1
+kitchen;2,-1,-1,0,-1,-1
+dining room;-1,-1,1,3,-1,-1
+hall;-1,2,0,-1,-1,-1
+
+test successful

@@ -27,6 +27,8 @@ namespace NEA
     }
     public partial class RPG : Form
     {
+        // use of a Constant
+        const string GAME_WON_MESSAGE = "Game won! Congratulations!";
         public WinOption CheckWin;
         public string WinArguments = "";
         public List<WinCombo> WinOptions = new List<WinCombo>();
@@ -75,7 +77,7 @@ namespace NEA
             if (Complete)
             {
                 Debug.WriteLine("completed!");
-                GameWon(tblLayout);
+                ReturnToMenuPage(tblLayout, GAME_WON_MESSAGE);
                 return Complete;
             }
             // if not won, returns false so code from base is executed
@@ -90,7 +92,7 @@ namespace NEA
                 if (i.Name == WinArguments)
                 {
                     Debug.WriteLine("completed!");
-                    GameWon(tblLayout);
+                    ReturnToMenuPage(tblLayout, GAME_WON_MESSAGE);
                     return true;
                 }
             }
@@ -104,20 +106,20 @@ namespace NEA
             if (Rooms[currentRoom].GetName() == WinArguments)
             {
                 Debug.WriteLine("completed!");
-                GameWon(tblLayout);
+                ReturnToMenuPage(tblLayout, GAME_WON_MESSAGE);
                 return true;
             }
             // if not won, returns false so code from base is executed
             return false;
         }
 
-        private void GameWon(TableLayoutPanel tblLayout)
+        private void ReturnToMenuPage(TableLayoutPanel tblLayout, string outputMessage)
         {
             // removes Controls across the four rows that change
             ClearScreen(tblLayout);
 
             // shows the user that they have won the map
-            CreateLabel(tblLayout, "Game won! Congratulations!", "lblWon", 1, 2, colSpan:3);
+            CreateLabel(tblLayout, outputMessage, "lblReturn", 1, 2, colSpan:3);
 
             // creates a button to allow user to end game and return to the main menu
             AddButton(tblLayout, CreateButton(tblLayout, "Return to Menu", EndGame), 2, 3);

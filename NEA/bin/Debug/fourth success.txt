@@ -1,0 +1,4 @@
+fourth success;adam;three room game with a porch, kitchen and hall;
+hall;-1,-1,1,-1,-1,-1
+porch;0,2,-1,-1,-1,-1
+kitchen;-1,-1,-1,1,-1,-1;knife

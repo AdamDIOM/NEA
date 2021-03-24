@@ -1,0 +1,6 @@
+test 7;adam;testing rooms;1
+hall;1,2,4,3,-1,-1
+porch;-1,-1,0,-1,-1,-1
+dining room;-1,-1,-1,0,-1,-1
+bathroom;-1,0,-1,-1,-1,-1
+kitchen;0,-1,-1,-1,-1,-1
