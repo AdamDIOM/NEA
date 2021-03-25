@@ -18,7 +18,7 @@ namespace NEA
         public static int currentRoom;
         public static List<Room> Rooms = new List<Room>();
         public static List<Item> Inventory = new List<Item>();
-        public  string AppPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        public string AppPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
         public delegate void DisplayOption(TableLayoutPanel tblLayout);
         public DisplayOption ShowMenu;
@@ -90,7 +90,7 @@ namespace NEA
         private void TitleButtons(TableLayoutPanel tblLayout)
         {
             /* creates a button for the Designer option and adds it to the table */
-            AddButton(tblLayout, CreateButton(tblLayout, "Design", DesignRPG), 1, 2);
+            AddButton(tblLayout, CreateButton(tblLayout, "Design", DesignData), 1, 2);
 
             /* creates a button for the Play option and adds it to the table */
             AddButton(tblLayout, CreateButton(tblLayout, "Play", ChoosePlayFile), 3, 2);

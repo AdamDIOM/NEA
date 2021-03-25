@@ -144,7 +144,7 @@ namespace NEA
                 }
             }
             // removes a Return to Menu Button
-            if(removeReturn) tblLayout.Controls.Remove(tblLayout.GetControlFromPosition(2, 5));
+            if (removeReturn) tblLayout.Controls.Remove(tblLayout.GetControlFromPosition(2, 5));
         }
 
         // creates a TextBox and adds it to the TableLayoutPanel
@@ -170,7 +170,7 @@ namespace NEA
             tempBox.Multiline = multiLine;
             // sets whether the TextBox's content can be edited or not
             tempBox.Enabled = editable;
-            
+
             // sets the span of the Label to the number of columns in the optional parameter
             tblLayout.SetColumnSpan(tempBox, colSpan);
             // sets the span of the Label to the number of rows in the optional parameter
@@ -179,6 +179,26 @@ namespace NEA
             tblLayout.Controls.Add(tempBox, x, y);
             // returns the Label
             return tempBox;
+        }
+
+
+
+        /* this method returns a List of Tuples containing the six directions, and their respective coordinates on the TableLayoutPanel  */
+        private List<Tuple<string, int, int>> CreateButtonTuples()
+        {
+            // creates a list to contain the information about each of the six buttons
+            List<Tuple<string, int, int>> DirectionalButtons = new List<Tuple<string, int, int>>();
+
+            /* creates six tuples containing button info and adds to the list */
+            DirectionalButtons.Add(new Tuple<string, int, int>("North", 2, 2));
+            DirectionalButtons.Add(new Tuple<string, int, int>("East", 3, 3));
+            DirectionalButtons.Add(new Tuple<string, int, int>("South", 2, 4));
+            DirectionalButtons.Add(new Tuple<string, int, int>("West", 1, 3));
+            DirectionalButtons.Add(new Tuple<string, int, int>("Up", 1, 2));
+            DirectionalButtons.Add(new Tuple<string, int, int>("Down", 1, 4));
+
+            // sends the list of buttons to where this function was called from
+            return DirectionalButtons;
         }
 
         // returns the opposite direction to what is input
@@ -223,5 +243,34 @@ namespace NEA
                     return new Tuple<string, int>("North", 0);
             }
         }
+
+
+        /* this method outputs a specified message and displays a return to main menu button for if the user has finished a game/design */
+        private void ReturnToMenuPage(TableLayoutPanel tblLayout, string outputMessage)
+        {
+            // removes Controls across the four rows that change
+            ClearScreen(tblLayout);
+
+            // shows the user that they have won the map
+            CreateLabel(tblLayout, outputMessage, "lblReturn", 1, 2, colSpan: 3);
+
+            // creates a button to allow user to end game and return to the main menu
+            AddButton(tblLayout, CreateButton(tblLayout, "Return to Menu", EndGame), 2, 3);
+
+        }
+        /* this method is used after the user views the ReturnToMenuPage method  to actually return */
+        private void EndGame(TableLayoutPanel tblLayout)
+        {
+            // removes Controls across the four rows that change
+            ClearScreen(tblLayout);
+
+            // changes title to the original title
+            ModifyTitle(tblLayout, "RPG Designer and Player");
+
+            /* moves three main controls back to original positions */
+            ShowStandardButtons(tblLayout);
+        }
+
+
     }
 }
