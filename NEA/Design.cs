@@ -88,32 +88,41 @@ namespace NEA
                 // checks to ensure it isn't checking desired direction or the inverse of the desired direction
                 if (a != desiredDirection && a != InverseDirection(desiredDirection).Item2)
                 {
-                    // checks to see if the original room (X) has a room to direction a
-                    if (originalRoom.Directions[a] != null && originalRoom.Directions[a] != "*Empty*")
+                    // use of try catch incase room causes issues - solving bug D2
+                    try
                     {
-                        // loops through all of the completed rooms
-                        // r.Directions[a] is the name of the room to find
-                        /* this method finds a room in direction a from the original room (the first part of the u) */
-                        TempRoom first = FindRoom(originalRoom, a, CompleteRooms, TempRooms, 1);
-
-                        // if the first room has a room in the desired direction then check to see if X.a has direction i (desired direction)
-                        if (first.Directions[desiredDirection] != null && first.Directions[desiredDirection] != "*Empty*")
+                        // checks to see if the original room (X) has a room to direction a
+                        if (originalRoom.Directions[a] != null && originalRoom.Directions[a] != "*Empty*")
                         {
-                            /* this method finds a room in the original direction from the first found room (the second part of the u) */
-                            TempRoom second = FindRoom(first, desiredDirection, CompleteRooms, TempRooms, 2);
-                            //MessageBox.Show("a room has been found (2nd degree)");
+                            // loops through all of the completed rooms
+                            // r.Directions[a] is the name of the room to find
+                            /* this method finds a room in direction a from the original room (the first part of the u) */
+                            TempRoom first = FindRoom(originalRoom, a, CompleteRooms, TempRooms, 1);
 
-                            // then check to see if X.a.i has direction inverse(a) as this is equivalent to X.i
-                            if (second.Directions[InverseDirection(a).Item2] != null && second.Directions[InverseDirection(a).Item2] != "*Empty*")
+                            // if the first room has a room in the desired direction then check to see if X.a has direction i (desired direction)
+                            if (first.Directions[desiredDirection] != null && first.Directions[desiredDirection] != "*Empty*")
                             {
-                                //MessageBox.Show($"Found room in desired direction: {second.Directions[InverseDirection(a).Item2]}");
-                                // as this is only needing the name of the room, the FindRoom method is not required and instead a TextBox can be directly created from the name
-                                // the TextBox can still be edited just in case there is something different going on with the design, such as misaligned rooms
-                                CreateTextBox(tblLayout, second.Directions[InverseDirection(a).Item2], "txt" + DirectionalTextBoxes[desiredDirection].Item1, DirectionalTextBoxes[desiredDirection].Item2, DirectionalTextBoxes[desiredDirection].Item3);
-                                found = true;
+                                /* this method finds a room in the original direction from the first found room (the second part of the u) */
+                                TempRoom second = FindRoom(first, desiredDirection, CompleteRooms, TempRooms, 2);
+                                //MessageBox.Show("a room has been found (2nd degree)");
+
+                                // then check to see if X.a.i has direction inverse(a) as this is equivalent to X.i
+                                if (second.Directions[InverseDirection(a).Item2] != null && second.Directions[InverseDirection(a).Item2] != "*Empty*")
+                                {
+                                    //MessageBox.Show($"Found room in desired direction: {second.Directions[InverseDirection(a).Item2]}");
+                                    // as this is only needing the name of the room, the FindRoom method is not required and instead a TextBox can be directly created from the name
+                                    // the TextBox can still be edited just in case there is something different going on with the design, such as misaligned rooms
+                                    CreateTextBox(tblLayout, second.Directions[InverseDirection(a).Item2], "txt" + DirectionalTextBoxes[desiredDirection].Item1, DirectionalTextBoxes[desiredDirection].Item2, DirectionalTextBoxes[desiredDirection].Item3);
+                                    found = true;
+                                }
                             }
                         }
                     }
+                    catch
+                    {
+                        //MessageBox.Show("Error with designing");
+                    }
+
                 }
             }
             if (!found)
@@ -189,7 +198,8 @@ namespace NEA
 
 
             // checks to see if the name of the current room has been changed (must be changed for the room to be complete)
-            if (tblLayout.GetControlFromPosition(2, 3).Text == "Current Room")
+            // added == "" to cope with blank room names to fix D1,D4
+            if (tblLayout.GetControlFromPosition(2, 3).Text == "Current Room" || tblLayout.GetControlFromPosition(2,3).Text == "")
             {
                 // outputs an error message
                 MessageBox.Show("Current room needs a name!");
@@ -309,6 +319,6 @@ namespace NEA
             }
         }
 
-        
+
     }
 }
